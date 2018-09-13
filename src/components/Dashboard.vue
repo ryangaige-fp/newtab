@@ -1,6 +1,9 @@
 <template>
   <div class="hello">
 
+
+
+
     <div class="container-fluid containerStyle">
       <div class="row">
         <div class="col12">
@@ -8,7 +11,14 @@
         </div>
       </div>
 
-      <img class="imgSize" :src="picture" alt="" srcset="">
+      <img class="imgSize imageLocation" :src="picture" alt="" srcset="">
+      <div class="row">
+        <div class="col-2">
+          {{weather.main.temp}}
+          {{weather.weather.icon}}
+          <p>{{weather.name}}</p>
+        </div>
+      </div>
 
     </div>
 
@@ -31,7 +41,7 @@
     },
     mounted() {
       this.$store.dispatch("getPicture")
-      this.store.dispatch("getWeather")
+      this.$store.dispatch("getWeather")
     },
     computed: {
       picture() {
@@ -63,9 +73,13 @@
     margin-left: auto;
   }
 
-  .containerStyle {
+  .imageLocation {
     z-index: 1;
+  }
 
+  .containerStyle {
+
+    height: 100vh
   }
 
   h3 {

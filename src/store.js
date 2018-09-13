@@ -41,8 +41,8 @@ export default new Vuex.Store({
     },
     getWeather({ commit, dispatch }) {
       weatherApi.get().then(res => {
-        console.log(res.data.weather);
-        commit("setWeather", res.data.weather);
+        console.log(res.data);
+        commit("setWeather", res.data);
       });
     }
   }
