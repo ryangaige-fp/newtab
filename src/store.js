@@ -16,11 +16,18 @@ let weatherApi = axios.create({
   baseURL: "http://bcw-sandbox.herokuapp.com/api/weather",
   timeout: 5000
 });
+let quoteApi = axios.create({
+  baseURL: "http://bcw-sandbox.herokuapp.com/api/quotes",
+  timeout: 5000
+});
 
 export default new Vuex.Store({
   state: {
     picture: {},
-    weather: {}
+    weather: {},
+    quote: {},
+    todos: []
+    // myTodo: {}
   },
 
   mutations: {
@@ -29,7 +36,16 @@ export default new Vuex.Store({
     },
     setWeather(state, weather) {
       state.weather = weather;
+    },
+    setQuote(state, quote) {
+      state.quote = quote;
+    },
+    setTodo(state, todo) {
+      state.todos = todo;
     }
+    // setMyTodo(state, todo) {
+    //   state.myTodo = todo;
+    // }
   },
 
   actions: {
@@ -44,6 +60,54 @@ export default new Vuex.Store({
         console.log(res.data);
         commit("setWeather", res.data);
       });
+    },
+
+    getQuote({ commit, dispatch }) {
+      quoteApi.get().then(res => {
+        console.log(res.data);
+        commit("setQuote", res.data);
+      });
+    },
+
+    //#region
+    createTodo({ commit, dispatch }, newTodoItem) {
+      db.collection("todoList")
+        .add(newTodoItem)
+        .then(doc => {
+          console.log("looking for Id:", doc.id);
+          dispatch("getAllTodoItems");
+        });
+    },
+    getAllTodoItems({ commit, dispatch }) {
+      db.collection("todoList")
+        .get()
+        .then(querySnapShot => {
+          let todos = [];
+          querySnapShot.forEach(doc => {
+            let todo = doc.data();
+            todo.id = doc.id;
+            todos.push(todo);
+          });
+          commit("setTodo", todos);
+        });
     }
+    // getMyTodoList({ commit, dispatch, state }) {
+    //   db.collection("todoList")
+    //     .where("todoListId", "==", state.myTodo.id)
+    //     .get()
+    //     .then(querySnapShot => {
+    //       let myTodo = [];
+    //       querySnapShot.forEach(doc => {
+    //         if (doc.exists) {
+    //           let todo = doc.data();
+    //           todo.id = doc.id;
+    //           myTodo.push(todo);
+    //         }
+    //       });
+    //       commit("setMyTodo", myTodo);
+    //     });
+    // }
+
+    //#endregion
   }
 });
