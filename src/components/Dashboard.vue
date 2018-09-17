@@ -126,10 +126,10 @@
     if (minutes < 10) {
       minutes = '0' + minutes
     }
-    if (seconds < 10) {
-      seconds = '0' + seconds
-    }
-    document.querySelectorAll('.clock')[0].innerHTML = hours + ":" + minutes + ":" + seconds + " " + period;
+    // if (seconds < 10) {
+    //   seconds = '0' + seconds
+    // }
+    document.querySelectorAll('.clock')[0].innerHTML = hours + ":" + minutes + " " + period;
 
 
     return time;
