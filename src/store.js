@@ -90,23 +90,16 @@ export default new Vuex.Store({
           });
           commit("setTodo", todos);
         });
+    },
+
+    removeTodo({ commit, dispatch }, id) {
+      db.collection("todoList")
+        .doc(id)
+        .delete()
+        .then(() => {
+          dispatch("getAllTodoItems");
+        });
     }
-    // getMyTodoList({ commit, dispatch, state }) {
-    //   db.collection("todoList")
-    //     .where("todoListId", "==", state.myTodo.id)
-    //     .get()
-    //     .then(querySnapShot => {
-    //       let myTodo = [];
-    //       querySnapShot.forEach(doc => {
-    //         if (doc.exists) {
-    //           let todo = doc.data();
-    //           todo.id = doc.id;
-    //           myTodo.push(todo);
-    //         }
-    //       });
-    //       commit("setMyTodo", myTodo);
-    //     });
-    // }
 
     //#endregion
   }

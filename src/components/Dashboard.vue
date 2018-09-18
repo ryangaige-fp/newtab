@@ -15,16 +15,18 @@
 
       <!-- weather Section -->
       <div class="row">
-        <div class="col-2 weatherLocation">
-          <p><span v-if='weather.main' class="textShadow">{{weather.main.temp}}°</span></p>
-          <p>{{weather.name}}</p>
+        <div class="col-2 weatherLocation ">
+          <img class="imgSize textShadow" v-if='weather.weather' :src="weather.weather.icon" alt="" srcset="">
+          <p class="textShadow" v-if='weather.main'>{{weather.weather.main}}</p>
+          <h4><span class="textShadow" v-if='weather.main'>{{kelToFehr(weather.main.temp)}}°</span></h4>
+          <h3 class="textShadow">{{weather.name}}</h3>
         </div>
       </div>
 
       <!-- quote section -->
       <div class="row">
-        <div class="col-8 quoteLocation">
-          <p>"{{quote.quote}}" - {{quote.author}}</p>
+        <div class="col-8 quoteLocation textShadow">
+          <h5>"{{quote.quote}}" - {{quote.author}}</h5>
         </div>
       </div>
 
@@ -33,30 +35,34 @@
         <div class="row">
           <div class="col-4 todoLocation">
             <form @submit.prevent="createTodo(); newTodoItem = {}">
-              <input type="text" name="todo" v-model="newTodoItem.title" placeholder="What needs to be done?">
+              <input type="text" name="todo" v-model="newTodoItem.title" placeholder="Things To do!">
               <button type="submit"><i class="fas fa-plus"></i></button>
             </form>
           </div>
 
-          <ul class="col-4 todoListStyle">
-            <li v-for="(todo, index) in todos">
-              <div class="custom-control custom-checkbox">
-                <input type="checkbox" class="custom-control-input" id="customCheck1">
-                <label class="custom-control-label strikethrough" for="customCheck1">{{todo.title}}</label>
-              </div>
 
-            </li>
-          </ul>
+          <div class="col-6 todoListStyle ">
+            <ul class="col-4 text-left ">
+              <li v-for="(todo, index) in todos">
+                <div class="custom-control custom-checkbox textShadow">
+                  <input type="checkbox" class="custom-control-input " :id="'customCheck1'+ todo.id">
+                  <label class="custom-control-label strikethrough textShadow" :for="'customCheck1' + todo.id">
+                    {{todo.title}}</label>
+                  <button class="buttonBackGround" @click="deleteTodo(todo.id) "><i class="far fa-trash-alt textShadow  "></i></button>
+                </div>
+              </li>
+            </ul>
+          </div>
 
         </div>
       </div>
     </div>
-    <div id="clockDisplay" class="clock">
 
-
+    <!-- clock section -->
+    <div id="clockDisplay" class="clock textShadow">{{clock()}}</div>
+    <div id="greetingDisplay" class=" greetingLocation textShadow">
+      <h2>{{greetings()}}</h2>
     </div>
-
-
 
   </div>
 </template>
@@ -100,42 +106,58 @@
     methods: {
       createTodo() {
         this.$store.dispatch("createTodo", this.newTodoItem)
+      },
+      deleteTodo(id) {
+        this.$store.dispatch("removeTodo", id)
+
+      },
+      kelToFehr(kTemp) {
+        return Math.round((kTemp * (9 / 5)) - 459.67)
+      },
+
+      clock() {
+        let time = new Date(),
+          hours = time.getHours(),
+          minutes = time.getMinutes(),
+          period = "am";
+
+        if (hours >= 12) {
+          period = "pm"
+        }
+        if (hours > 12) {
+          hours = hours - 12
+        }
+        if (minutes < 10) {
+          minutes = '0' + minutes
+        }
+
+        return time = hours + ":" + minutes + " " + period;
+
+      },
+
+      greetings() {
+        let greeting
+        let time = new Date().getHours()
+        if (time < 10) {
+          greeting = "Good Morning!"
+        } else if (time < 20) {
+          greeting = "Good Day!"
+        } else {
+          greeting = "Good Evening!"
+        }
+        return greeting
       }
+
     },
 
-    components: {
-
-    }
+    components: {}
 
   }
 
 
-  function clock() {
-    let time = new Date(),
-      hours = time.getHours(),
-      minutes = time.getMinutes(),
-      seconds = time.getSeconds(),
-      period = "am";
-
-    if (hours >= 12) {
-      period = "pm"
-    }
-    if (hours > 12) {
-      hours = hours - 12
-    }
-    if (minutes < 10) {
-      minutes = '0' + minutes
-    }
-    // if (seconds < 10) {
-    //   seconds = '0' + seconds
-    // }
-    document.querySelectorAll('.clock')[0].innerHTML = hours + ":" + minutes + " " + period;
 
 
-    return time;
-  }
 
-  setInterval(clock, 1000);
 
 
 
@@ -180,19 +202,34 @@
   }
 
   .textShadow {
-    text-shadow: 1px, 1px, 2px, black
+    text-shadow: 3px 2px 16px #000000;
   }
 
   img {
     height: 100%;
     width: 100%;
-
   }
 
+  .fa-trash-alt {
+    background: transparent;
+    color: white
+  }
+
+  .fa-trash-alt:hover {
+    background: transparent;
+    color: red
+  }
+
+  .buttonBackGround {
+    background: transparent;
+    border: none
+  }
+
+
   .weatherLocation {
-    left: 84%;
+    left: 81%;
     position: absolute;
-    bottom: 85%;
+    bottom: 81%;
     z-index: 2;
     color: white;
   }
@@ -203,22 +240,26 @@
     bottom: 5%;
     z-index: 3;
     color: white;
+
   }
 
   .todoLocation {
-    left: 57%;
+    left: 73%;
     position: absolute;
-    bottom: 35%;
+    bottom: 62%;
     z-index: 4;
 
   }
 
   .todoListStyle {
     color: white;
-    left: 57%;
+    left: 82%;
     position: absolute;
-    bottom: 15%;
+    bottom: 46%;
     z-index: 4;
+    height: 10%;
+
+
   }
 
   input[type=checkbox]:checked+label.strikethrough {
@@ -233,5 +274,15 @@
     position: absolute;
     bottom: 40%;
     z-index: 4;
+  }
+
+  .greetingLocation {
+    color: white;
+    left: 32%;
+    position: absolute;
+    bottom: 35%;
+    z-index: 4;
+
+
   }
 </style>
