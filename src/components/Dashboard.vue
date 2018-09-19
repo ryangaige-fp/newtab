@@ -1,9 +1,6 @@
 <template>
   <div class="hello">
 
-
-
-
     <div class="container-fluid containerStyle">
       <div class="row">
         <div class="col12">
@@ -15,11 +12,13 @@
 
       <!-- weather Section -->
       <div class="row">
-        <div class="col-2 weatherLocation ">
-          <img class="imgSize textShadow" v-if='weather.weather' :src="weather.weather.icon" alt="" srcset="">
-          <p class="textShadow" v-if='weather.main'>{{weather.weather.main}}</p>
-          <h4><span class="textShadow" v-if='weather.main'>{{kelToFehr(weather.main.temp)}}°</span></h4>
+        <div class="col-2-sm weatherLocation ">
+          <img class="iconSize textShadow" v-if='weather.weather' :src="'http://openweathermap.org/img/w/' + weather.weather[0].icon + '.png'"
+            alt="" srcset="">
           <h3 class="textShadow">{{weather.name}}</h3>
+          <h4><span class="textShadow" v-if='weather.main'>{{kelToFehr(weather.main.temp)}}° f -
+              {{weather.weather[0].main}}</span></h4>
+
         </div>
       </div>
 
@@ -31,24 +30,35 @@
       </div>
 
       <!-- todo section -->
-      <div class="container">
+      <div class="container-fluid">
         <div class="row">
-          <div class="col-4 todoLocation">
-            <form @submit.prevent="createTodo(); newTodoItem = {}">
-              <input type="text" name="todo" v-model="newTodoItem.title" placeholder="Things To do!">
-              <button type="submit"><i class="fas fa-plus"></i></button>
-            </form>
+
+          <div class="todoLocation">
+            <!-- <form @submit.prevent="createTodo(); newTodoItem = {}">
+              <input type="text" name="todo" v-model="newTodoItem.title" placeholder="Things To do!" required>
+            </form> -->
+
+
+            <ul class="list-group">
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                Items To Do - <span class="badge badge-primary badge-pill">1</span>
+                <!-- pull the modal -->
+                <button class="buttonBackGround" data-balloon="Add New Item!" data-balloon-pos="up" data-toggle="modal"
+                  data-target="#exampleModalCenter" type="button"><i class="fas fa-plus"></i></button>
+              </li>
+            </ul>
           </div>
 
-
-          <div class="col-6 todoListStyle ">
-            <ul class="col-4 text-left ">
-              <li v-for="(todo, index) in todos">
-                <div class="custom-control custom-checkbox textShadow">
+          <div class="todoListStyle ">
+            <ul class="text-left list-group ">
+              <li v-for="(todo, index) in todos" class="list-group-item">
+                <div class="custom-control custom-checkbox ">
                   <input type="checkbox" class="custom-control-input " :id="'customCheck1'+ todo.id">
-                  <label class="custom-control-label strikethrough textShadow" :for="'customCheck1' + todo.id">
+                  <label class="custom-control-label strikethrough " :for="'customCheck1' + todo.id">
                     {{todo.title}}</label>
-                  <button class="buttonBackGround" @click="deleteTodo(todo.id) "><i class="far fa-trash-alt textShadow  "></i></button>
+                  <div class="shake">
+                    <button class="buttonBackGround" @click="deleteTodo(todo.id) "><i class="far fa-trash-alt   "></i></button>
+                  </div>
                 </div>
               </li>
             </ul>
@@ -58,10 +68,42 @@
       </div>
     </div>
 
+    <!-- modal Section -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalCenterTitle">New To Do</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="message-text" class="col-form-label"></label>
+              <form>
+                <textarea class="form-control" id="message-text" name="todo" v-model="newTodoItem.title" placeholder="What do you need to do?"
+                  required></textarea>
+              </form>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" @click="createTodo(); newTodoItem = {}" class="btn btn-primary" data-dismiss="modal">Add
+              To Do</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
     <!-- clock section -->
     <div id="clockDisplay" class="clock textShadow">{{clock()}}</div>
     <div id="greetingDisplay" class=" greetingLocation textShadow">
-      <h2>{{greetings()}}</h2>
+      <h1>{{greetings()}}</h1>
     </div>
 
   </div>
@@ -138,10 +180,10 @@
       greetings() {
         let greeting
         let time = new Date().getHours()
-        if (time < 10) {
+        if (time < 12) {
           greeting = "Good Morning!"
         } else if (time < 20) {
-          greeting = "Good Day!"
+          greeting = "Good Afternoon!"
         } else {
           greeting = "Good Evening!"
         }
@@ -178,13 +220,7 @@
   }
 
   .containerStyle {
-
     height: 100vh;
-
-  }
-
-  h3 {
-    margin: 40px 0 0;
   }
 
   ul {
@@ -205,14 +241,20 @@
     text-shadow: 3px 2px 16px #000000;
   }
 
+  .list-group-item {
+    background-color: rgba(255, 255, 255, 0.7);
+
+  }
+
   img {
     height: 100%;
     width: 100%;
   }
 
+  /* font awesome style */
   .fa-trash-alt {
     background: transparent;
-    color: white
+    color: black
   }
 
   .fa-trash-alt:hover {
@@ -220,18 +262,28 @@
     color: red
   }
 
-  .buttonBackGround {
-    background: transparent;
-    border: none
+  .fa-plus:hover {
+    color: green
   }
 
+  .buttonBackGround {
+    background: transparent;
+    border: none;
+    outline: none
+  }
 
+  /* weather styling */
   .weatherLocation {
-    left: 81%;
+    left: 87%;
     position: absolute;
-    bottom: 81%;
+    bottom: 78%;
     z-index: 2;
     color: white;
+  }
+
+  .iconSize {
+    height: 5rem;
+    width: 5rem
   }
 
   .quoteLocation {
@@ -252,8 +304,8 @@
   }
 
   .todoListStyle {
-    color: white;
-    left: 82%;
+    color: black;
+    left: 77%;
     position: absolute;
     bottom: 46%;
     z-index: 4;
@@ -262,8 +314,13 @@
 
   }
 
+  /* checkbox style */
   input[type=checkbox]:checked+label.strikethrough {
     text-decoration: line-through;
+  }
+
+  .custom-control-input:hover {
+    color: white
   }
 
 
