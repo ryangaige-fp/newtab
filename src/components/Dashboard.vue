@@ -3,12 +3,14 @@
 
     <div class="container-fluid containerStyle">
       <div class="row">
-        <div class="col12">
+        <div class="col-2-sm">
+
 
         </div>
       </div>
       <!-- background Image -->
       <img class="imgSize imageLocation" :src="picture" alt="" srcset="">
+
 
       <!-- weather Section -->
       <div class="row">
@@ -42,8 +44,14 @@
                 <button class="buttonBackGround" data-balloon="Add New Item!" data-balloon-pos="up" data-toggle="modal"
                   data-target="#exampleModalCenter" type="button"><i class="fas fa-plus"></i></button>
                 <span class="badge badge-primary badge-pill pillLocation">{{uncompletedTodo}}</span>
+                <div>
+                  <button class="buttonBackGround" data-balloon="Sign Out" data-balloon-pos="up" type="button" @click="logout"
+                    v-if="user.email"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
               </li>
             </ul>
+            <!-- logout button -->
+
           </div>
 
           <div class="todoListStyle ">
@@ -165,6 +173,9 @@
         this.$store.dispatch("removeTodo", id)
 
       },
+      logout() {
+        this.$store.dispatch("logout")
+      },
 
       updateStatus(todo) {
         todo.status = !todo.status
@@ -239,6 +250,12 @@
     z-index: 1;
   }
 
+  .logoutButton {
+    right: 57%;
+    bottom: 57%;
+    z-index: 6;
+  }
+
   .containerStyle {
     height: 100vh;
   }
@@ -272,10 +289,18 @@
   }
 
   /* font awesome style */
+
+  .fa-sign-out-alt {
+    background: transparent;
+    border: none;
+    outline: none
+  }
+
   .fa-trash-alt {
     background: transparent;
     color: black
   }
+
 
   .fa-trash-alt:hover {
     background: transparent;

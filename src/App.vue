@@ -1,7 +1,7 @@
 <template>
   <div id="app">
 
-    <button class="btn btn-outline-primary" @click="logout" v-if="user.email">Logout</button>
+
 
 
     <router-view />
@@ -12,9 +12,7 @@
   export default {
     name: 'App',
     methods: {
-      logout() {
-        this.$store.dispatch("logout")
-      }
+
     },
     computed: {
       user() {
@@ -31,8 +29,7 @@
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
-    background-color: none;
-    bottom: 57%
+
   }
 
   /* #nav {

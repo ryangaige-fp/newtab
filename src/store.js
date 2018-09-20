@@ -183,10 +183,10 @@ export default new Vuex.Store({
         if (user) {
           commit("setUser", user);
           dispatch("getAllTodoItems");
-          router.push("/src/components/Dashboard.vue");
+          router.push("/Dashboard");
         } else {
           commit("setUser", {});
-          router.push("/src/components/Login.vue");
+          router.push("/login");
         }
       });
     }

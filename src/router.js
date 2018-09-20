@@ -17,7 +17,7 @@ export default new Router({
         if (store.state.user.email) {
           return next();
         }
-        return next("/Login");
+        return next("/login");
       }
     },
     {
