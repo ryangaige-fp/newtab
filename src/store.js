@@ -23,14 +23,20 @@ let quoteApi = axios.create({
 
 export default new Vuex.Store({
   state: {
+    user: {},
     picture: {},
     weather: {},
     quote: {},
-    todos: []
+    todos: [],
+    status: true
     // myTodo: {}
   },
 
   mutations: {
+    setUser(state, user) {
+      state.user = user;
+    },
+
     setPicture(state, picture) {
       state.picture = picture;
     },
@@ -75,11 +81,12 @@ export default new Vuex.Store({
         .add(newTodoItem)
         .then(doc => {
           console.log("looking for Id:", doc.id);
-          dispatch("getAllTodoItems");
+          dispatch("getAllTodoItems", newTodoItem.userId);
         });
     },
-    getAllTodoItems({ commit, dispatch }) {
+    getAllTodoItems({ commit, dispatch }, userId) {
       db.collection("todoList")
+        .where("userId", "==", userId)
         .get()
         .then(querySnapShot => {
           let todos = [];
@@ -92,15 +99,96 @@ export default new Vuex.Store({
         });
     },
 
-    removeTodo({ commit, dispatch }, id) {
+    removeTodo({ commit, dispatch, state }, id) {
       db.collection("todoList")
         .doc(id)
         .delete()
         .then(() => {
-          dispatch("getAllTodoItems");
+          dispatch("getAllTodoItems", state.user.uid);
         });
-    }
+    },
+
+    editStatus({ commit, dispatch }, todo) {
+      db.collection("todoList")
+        .doc(todo.id)
+        .update(todo)
+        .then(res => {
+          console.log(res);
+        });
+
+      dispatch("getAllTodoItems", todo.userId);
+    },
 
     //#endregion
+
+    // User Register and Authentication
+    register({ commit, dispatch }, user) {
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(user.email, user.password)
+        .then(res => {
+          router.push("/dashboard");
+          commit("setUser", res.user);
+          firebase
+            .auth()
+            .currentUser.updateProfile({ displayName: user.displayName })
+            .then(res => {
+              console.log("Profile Updated");
+            })
+            .catch(err => {
+              console.error(err);
+            });
+          firebase
+            .auth()
+            .currentUser.sendEmailVerification()
+            .then(res => {
+              console.log("Verification Email Sent");
+            })
+            .catch(err => {
+              console.error(err);
+            });
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    },
+    login({ commit, dispatch }, user) {
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(user.email, user.password)
+        .then(res => {
+          router.push("/src/components/Dashboard.vue");
+          commit("setUser", res.user);
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    },
+    logout({ commit, dispatch }) {
+      firebase
+        .auth()
+        .signOut()
+        .then(res => {
+          router.push("/login");
+          commit("setUser", {});
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    },
+    authenticate({ commit, dispatch }) {
+      // you can change the default route here
+      //if someone is signed in, it goes to dashboard, if not, go to auth
+      firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+          commit("setUser", user);
+          dispatch("getAllTodoItems");
+          router.push("/src/components/Dashboard.vue");
+        } else {
+          commit("setUser", {});
+          router.push("/src/components/Login.vue");
+        }
+      });
+    }
   }
 });

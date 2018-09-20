@@ -34,17 +34,14 @@
         <div class="row">
 
           <div class="todoLocation">
-            <!-- <form @submit.prevent="createTodo(); newTodoItem = {}">
-              <input type="text" name="todo" v-model="newTodoItem.title" placeholder="Things To do!" required>
-            </form> -->
-
-
             <ul class="list-group">
               <li class="list-group-item d-flex justify-content-between align-items-center">
-                Items To Do - <span class="badge badge-primary badge-pill">1</span>
+                Items To Do
+
                 <!-- pull the modal -->
                 <button class="buttonBackGround" data-balloon="Add New Item!" data-balloon-pos="up" data-toggle="modal"
                   data-target="#exampleModalCenter" type="button"><i class="fas fa-plus"></i></button>
+                <span class="badge badge-primary badge-pill pillLocation">{{uncompletedTodo}}</span>
               </li>
             </ul>
           </div>
@@ -53,8 +50,9 @@
             <ul class="text-left list-group ">
               <li v-for="(todo, index) in todos" class="list-group-item">
                 <div class="custom-control custom-checkbox ">
-                  <input type="checkbox" class="custom-control-input " :id="'customCheck1'+ todo.id">
-                  <label class="custom-control-label strikethrough " :for="'customCheck1' + todo.id">
+                  <input @click="updateStatus(todo) " type="checkbox" class="custom-control-input " :id="'customCheck1'+ todo.id"
+                    :checked="todo.status">
+                  <label class="custom-control-label" :class="striked(todo)" :for="'customCheck1' + todo.id">
                     {{todo.title}}</label>
                   <div class="shake">
                     <button class="buttonBackGround" @click="deleteTodo(todo.id) "><i class="far fa-trash-alt   "></i></button>
@@ -103,7 +101,7 @@
     <!-- clock section -->
     <div id="clockDisplay" class="clock textShadow">{{clock()}}</div>
     <div id="greetingDisplay" class=" greetingLocation textShadow">
-      <h1>{{greetings()}}</h1>
+      <h1>{{greetings()}} {{user.displayName}} !</h1>
     </div>
 
   </div>
@@ -126,10 +124,13 @@
       this.$store.dispatch("getPicture")
       this.$store.dispatch("getWeather")
       this.$store.dispatch("getQuote")
-      this.$store.dispatch("getAllTodoItems")
+      this.$store.dispatch("getAllTodoItems", this.user.uid)
 
     },
     computed: {
+      user() {
+        return this.$store.state.user
+      },
       picture() {
         return this.$store.state.picture
       },
@@ -142,21 +143,40 @@
       },
       todos() {
         return this.$store.state.todos
+      },
+      uncompletedTodo() {
+        let counter = 0
+        this.$store.state.todos.forEach(todo => {
+          if (todo.status == false) {
+            counter++
+          }
+        });
+        return counter
       }
 
     },
     methods: {
       createTodo() {
+        this.newTodoItem.status = false
+        this.newTodoItem.userId = this.user.uid
         this.$store.dispatch("createTodo", this.newTodoItem)
       },
       deleteTodo(id) {
         this.$store.dispatch("removeTodo", id)
 
       },
+
+      updateStatus(todo) {
+        todo.status = !todo.status
+        this.$store.dispatch("editStatus", todo)
+      },
+
       kelToFehr(kTemp) {
         return Math.round((kTemp * (9 / 5)) - 459.67)
       },
-
+      striked(todo) {
+        return todo.status ? "strikethrough" : ""
+      },
       clock() {
         let time = new Date(),
           hours = time.getHours(),
@@ -181,11 +201,11 @@
         let greeting
         let time = new Date().getHours()
         if (time < 12) {
-          greeting = "Good Morning!"
+          greeting = "Good Morning"
         } else if (time < 20) {
-          greeting = "Good Afternoon!"
+          greeting = "Good Afternoon"
         } else {
-          greeting = "Good Evening!"
+          greeting = "Good Evening"
         }
         return greeting
       }
@@ -223,10 +243,10 @@
     height: 100vh;
   }
 
-  ul {
+  /* ul {
     list-style-type: none;
     padding: 0;
-  }
+  } */
 
   li {
     display: inline-block;
@@ -242,7 +262,7 @@
   }
 
   .list-group-item {
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: rgba(255, 255, 255, 0.8);
 
   }
 
@@ -296,16 +316,16 @@
   }
 
   .todoLocation {
-    left: 73%;
+    left: 84%;
     position: absolute;
-    bottom: 62%;
+    bottom: 57%;
     z-index: 4;
 
   }
 
   .todoListStyle {
     color: black;
-    left: 77%;
+    left: 82%;
     position: absolute;
     bottom: 46%;
     z-index: 4;
@@ -315,7 +335,7 @@
   }
 
   /* checkbox style */
-  input[type=checkbox]:checked+label.strikethrough {
+  .strikethrough {
     text-decoration: line-through;
   }
 
@@ -323,6 +343,10 @@
     color: white
   }
 
+  .custom-control-input {
+    color: red;
+    background: red
+  }
 
   .clock {
     font-size: 10em;
@@ -335,11 +359,13 @@
 
   .greetingLocation {
     color: white;
-    left: 32%;
+    left: 36%;
     position: absolute;
     bottom: 35%;
     z-index: 4;
+  }
 
-
+  .pillLocation {
+    left: 45%
   }
 </style>

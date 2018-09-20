@@ -1,12 +1,28 @@
 <template>
   <div id="app">
-    <!-- <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div> -->
+
+    <button class="btn btn-outline-primary" @click="logout" v-if="user.email">Logout</button>
+
+
     <router-view />
   </div>
 </template>
+
+<script>
+  export default {
+    name: 'App',
+    methods: {
+      logout() {
+        this.$store.dispatch("logout")
+      }
+    },
+    computed: {
+      user() {
+        return this.$store.state.user
+      }
+    }
+  }
+</script>
 
 <style>
   #app {
@@ -15,11 +31,13 @@
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
+    background-color: none;
+    bottom: 57%
   }
 
-  #nav {
+  /* #nav {
     padding: 30px;
-  }
+  } */
 
   #nav a {
     font-weight: bold;
