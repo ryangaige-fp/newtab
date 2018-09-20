@@ -45,12 +45,13 @@
                   data-target="#exampleModalCenter" type="button"><i class="fas fa-plus"></i></button>
                 <span class="badge badge-primary badge-pill pillLocation">{{uncompletedTodo}}</span>
                 <div>
+                  <!-- logout button -->
                   <button class="buttonBackGround" data-balloon="Sign Out" data-balloon-pos="up" type="button" @click="logout"
                     v-if="user.email"><i class="fas fa-sign-out-alt"></i></button>
                 </div>
               </li>
             </ul>
-            <!-- logout button -->
+
 
           </div>
 
@@ -108,10 +109,11 @@
 
     <!-- clock section -->
     <div id="clockDisplay" class="clock textShadow">{{clock()}}</div>
-    <div id="greetingDisplay" class=" greetingLocation textShadow">
-      <h1>{{greetings()}} {{user.displayName}} !</h1>
+    <div class="row">
+      <div id="greetingDisplay" class=" greetingLocation textShadow">
+        <h1>{{greetings()}} {{user.displayName}} !</h1>
+      </div>
     </div>
-
   </div>
 </template>
 
