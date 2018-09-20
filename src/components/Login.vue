@@ -1,13 +1,13 @@
 <template>
     <div class="login container">
         <div class="row justify-content-around">
-            <div class="col-4">
+            <div class="col-4 p-4">
                 <form @submit.prevent="login(user);user = {};">
                     <div class="form-group">
                         <label for="email">Email</label>
-                        <input class="form-control" type="email" id="email" v-model="user.email">
+                        <input class="form-control" type="email" id="email" v-model="user.email" required>
                         <label for="password">Password</label>
-                        <input class="form-control" type="password" id="password" v-model="user.password">
+                        <input class="form-control" type="password" id="password" v-model="user.password" required>
                     </div>
                     <button class="btn btn-outline-dark" type="submit">Login</button>
                 </form>

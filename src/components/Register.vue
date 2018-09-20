@@ -1,15 +1,15 @@
 <template>
     <div class="register container">
         <div class="row justify-content-around">
-            <div class="col-4">
+            <div class="col-6 p-5">
                 <form @submit.prevent="register(user);user = {};">
                     <div class="form-group">
                         <label for="name">Name</label>
-                        <input class="form-control" type="text" id="name" v-model="user.displayName">
+                        <input class="form-control" type="text" id="name" v-model="user.displayName" required>
                         <label for="email">Email</label>
-                        <input class="form-control" type="email" id="email" v-model="user.email">
+                        <input class="form-control" type="email" id="email" v-model="user.email" required>
                         <label for="password">Password</label>
-                        <input class="form-control" type="password" id="password" v-model="user.password">
+                        <input class="form-control" type="password" id="password" v-model="user.password" required>
                     </div>
                     <button class="btn btn-outline-dark" type="submit">Register</button>
                 </form>
